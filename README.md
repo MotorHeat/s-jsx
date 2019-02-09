@@ -1,5 +1,5 @@
 # s-jsx
-This is yet another JavaScript view library that manages application state using [S.js](https://github.com/adamhaile/S) signals and creates real DOM nodes (similar to Surplus, Solid and otthers).
+This is yet another JavaScript view library that manages application state using [S.js](https://github.com/adamhaile/S) signals and creates real DOM nodes (similar to Surplus, Solid and others).
 It allows you to define your view in JavaScript using JSX syntax.
 
 # Intro
@@ -47,7 +47,7 @@ S.root( () => {
 })
 ```
 # How to use it?
-The above example assumes you are using a JavaScript compiler like Babel or TypeScript and a module bundler like Parcel, Webpack, etc. If you are using JSX, all you need to do is install the JSX transform plugin and add the pragma option to your .babelrc file.
+The above example assumes you are using a JavaScript compiler like Babel or TypeScript and a module bundler like Parcel, Webpack, etc. If you are using JSX, all you need to do is install the [JSX transform plugin](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx) and add the pragma option to your .babelrc file.
 ```
 {
   "plugins": [
