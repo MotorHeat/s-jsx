@@ -1,7 +1,7 @@
 // This file is copied from https://github.com/adamhaile/surplus-mixin-data
 // Original code imports S from 'Surplus' package while here I need to import from s-js one
 
-import { S } from 's-js';
+import S from 's-js';
 export function data(signal, arg1, arg2) {
     var event = arg1 || 'input', on = arg1 === undefined ? true : arg1, off = arg2 === undefined ? (on === true ? false : null) : arg2;
     return function (node) {
