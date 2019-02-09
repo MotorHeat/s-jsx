@@ -3,8 +3,8 @@ This is yet another JavaScript view library that manages application state using
 It allows you to define your view in JavaScript using JSX syntax.
 
 # Intro
-This project was inspired by [S.js](https://github.com/adamhaile/S) and [Surplus](https://github.com/adamhaile/surplus)
-While Surplus implements own compiler that transpiles JSX syntax to a plain JavaScript this library implements the JSX Factory function that creates real DOM nodes and manages S-computations. 
+This project was inspired by [S.js](https://github.com/adamhaile/S) and [Surplus](https://github.com/adamhaile/surplus).
+Surplus implements own compiler that transpiles JSX syntax to a plain JavaScript while this library implements the JSX Factory function that creates real DOM nodes and manages S-computations. 
 
 # How it differs from Surplus?
 - You don't need a special compiler, you can use any existing JSX transpilers (Babel, TypeScript)
