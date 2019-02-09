@@ -1,6 +1,5 @@
 # s-jsx
-Make it possible to use JSX together with [S.js](https://github.com/adamhaile/S) computations
-This is yet another JavaScript view library that manages application state using S.js signals and creates real DOM nodes (similar to Surplus, Solid and otthers). It is intended to be used with JSX syntax to define your views but this is not mandatory (see below).
+This is yet another JavaScript view library that manages application state using [S.js](https://github.com/adamhaile/S) signals and creates real DOM nodes (similar to Surplus, Solid and otthers). It is intended to be used with JSX syntax to define your views but this is not mandatory (see below).
 
 # Intro
 This project was inspired by [S.js](https://github.com/adamhaile/S) and [Surplus](https://github.com/adamhaile/surplus)
