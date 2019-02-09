@@ -3,12 +3,23 @@
   "version": "0.0.1",
   "description": "Make it possible to use JSX together with s-js computations",
   "main": "src/s-jsx.js",
+  "module": "src/s-jsx.js",
+  "peerDependencies": {
+    "s-js": "^0.4.9"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
   },
+  "keywords": [
+    "S.js",
+    "jsx",
+    "view",
+    "s-jsx"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MotorHeat/s-jsx.git"
+  },
   "author": "MotorHeat",
-  "license": "MIT",
-  "dependencies": {
-    "s-js": "^0.4.9"
-  }
+  "license": "MIT"
 }
