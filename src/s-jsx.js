@@ -2,6 +2,7 @@ import S from 's-js'
 
 const fragmentProp = "s-jsx-fragment"
 const fnProp = 'fn'
+const fnProps = ['fn', 'fn0', 'fn1','fn2', 'fn3', 'fn4', 'fn5', 'fn6', 'fn7', 'fn8', 'fn9' ]
 export function h(nameOrComponent, attributes) {
     let children = []
     for (let i = 2; i < arguments.length; i++) {
@@ -31,8 +32,12 @@ export function h(nameOrComponent, attributes) {
 }
 
 function processSpecialProps(element, props, nameOrComponent) {
-    if (props && props[fnProp]) {
-        props[fnProp](element, nameOrComponent)
+    if (props) {
+        fnProps.map( p => { 
+            if (props[p]) {
+                props[p](element, nameOrComponent)
+            }
+        })        
     }
 }
 
@@ -55,7 +60,7 @@ h.fragment = function fragment(_, fragment) {
 
 function setProps(element, props) {
     for (let a in props) {
-        if (a === fnProp) {
+        if (fnProps.indexOf(a) >= 0) {
             continue
         }
         let attrValue = props[a]
