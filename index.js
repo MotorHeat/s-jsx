@@ -121,12 +121,7 @@
     function isSignal(func) {
         let code = func.toString(); //func.name doesn't work in IE, this is the best that I can find 
 
-        function codeStartsWith(marker) {
-            return code.substr(0, marker.length) === marker
-        }
-        return codeStartsWith("function computation()")
-            || codeStartsWith("function data(value)")
-            || codeStartsWith("function value(update)");
+        return code.indexOf(".current()") >= 0 || code.indexOf('Error("conflicting values: "') >= 0
     }
 
     function factoryFunction(child) {
