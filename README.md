@@ -70,6 +70,28 @@ function UserProfile({name, age, address}) {
 }
 ```
 
+JSX is a language syntax extension that lets you write HTML tags insede JavaScript files. We use compiler to transform it 
+into "h" function calls under the hood. Note that JSX is not required for building applications with s-jsx.
+You can use "h" directly and without a compilation. This is the same example with counter but written with "h" function:
+
+```
+function CounterComponent({ counter }) {
+    return h('div', {},
+        h('h2', {}, counter),
+        h('p', {}, S(() => "The counter value is " + counter()))
+    )
+}
+
+function MainView(appState) {
+    return h('div', {},
+        h(CounterComponent, { counter: appState.counter }),
+        h('button', { onclick: () => appState.counter(appState.counter() + 1) }, "inc"),
+        h('button', { onclick: () => appState.counter(appState.counter() - 1) }, "dec")
+    )
+}
+```
+
+
 # Does SVG supported?
 Not yet but this is planned
 
