@@ -4,7 +4,7 @@
     (global = global || self, factory(global['s-jsx'] = {}, global.S));
 }(this, function (exports, S) { 'use strict';
 
-    var S__default = 'default' in S ? S['default'] : S;
+    S = S && S.hasOwnProperty('default') ? S['default'] : S;
 
     // This file is copied from https://github.com/adamhaile/surplus-mixin-data
     function data(signal, arg1, arg2) {
@@ -37,35 +37,35 @@
         };
     }
     function valueData(node, signal, event) {
-        S.S(function updateValue() {
+        S(function updateValue() {
             node.value = toString(signal());
         });
         node.addEventListener(event, valueListener, false);
-        S.S.cleanup(function () { node.removeEventListener(event, valueListener); });
+        S.cleanup(function () { node.removeEventListener(event, valueListener); });
         function valueListener() {
-            var cur = toString(S.S.sample(signal)), update = node.value;
+            var cur = toString(S.sample(signal)), update = node.value;
             if (cur !== update)
                 signal(update);
             return true;
         }
     }
     function checkboxData(node, signal, on, off) {
-        S.S(function updateCheckbox() {
+        S(function updateCheckbox() {
             node.checked = signal() === on;
         });
         node.addEventListener("change", checkboxListener, false);
-        S.S.cleanup(function () { node.removeEventListener("change", checkboxListener); });
+        S.cleanup(function () { node.removeEventListener("change", checkboxListener); });
         function checkboxListener() {
             signal(node.checked ? on : off);
             return true;
         }
     }
     function radioData(node, signal, on) {
-        S.S(function updateRadio() {
+        S(function updateRadio() {
             node.checked = (signal() === on);
         });
         node.addEventListener("change", radioListener, false);
-        S.S.cleanup(function () { node.removeEventListener("change", radioListener); });
+        S.cleanup(function () { node.removeEventListener("change", radioListener); });
         function radioListener() {
             if (node.checked)
                 signal(on);
@@ -73,13 +73,13 @@
         }
     }
     function textContentData(node, signal, event) {
-        S.S(function updateTextContent() {
+        S(function updateTextContent() {
             node.textContent = toString(signal());
         });
         node.addEventListener(event, textContentListener, false);
-        S.S.cleanup(function () { node.removeEventListener(event, textContentListener); });
+        S.cleanup(function () { node.removeEventListener(event, textContentListener); });
         function textContentListener() {
-            var cur = toString(S.S.sample(signal)), update = node.textContent;
+            var cur = toString(S.sample(signal)), update = node.textContent;
             if (cur !== update)
                 signal(update);
             return true;
@@ -149,7 +149,7 @@
             }
             let attrValue = props[a];
             if (typeof (attrValue) === "function" && isSignal(attrValue)) {
-                S__default(() => element[a] = attrValue());
+                S(() => element[a] = attrValue());
             }
             else {
                 element[a] = attrValue;
@@ -160,7 +160,7 @@
     function runFactory(parent, factory) {
         if (factory.isComputationFactory) {
             let prevChild = null;
-            S__default(() => {
+            S(() => {
                 let newChild = factory(parent, prevChild);
                 prevChild = newChild;
             });
