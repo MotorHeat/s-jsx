@@ -20,7 +20,7 @@ If you need some expression to be evaluated then you should wrap it with S-compu
 Example
 
 ```javascript
-import { h } from './s-jsx'
+import { h } from 'jsx-s'
 import S from 's-js'
 
 const appState = {
