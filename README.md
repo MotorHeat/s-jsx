@@ -70,7 +70,7 @@ function UserProfile({name, age, address}) {
 }
 ```
 
-JSX is a language syntax extension that lets you write HTML tags insede JavaScript files. We use compiler to transform it 
+JSX is a language syntax extension that lets you write HTML tags inside JavaScript files. We use compiler to transform it 
 into "h" function calls under the hood. Note that JSX is not required for building applications with s-jsx.
 You can use "h" directly and without a compilation. This is the same example with counter but written with "h" function:
 
