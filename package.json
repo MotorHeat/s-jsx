@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Make it possible to use JSX together with s-js computations",
   "main": "index.js",
-  "module": "src/s-jsx.js",
+  "module": "src/index.js",
   "peerDependencies": {
     "s-js": "^0.4.9"
   },
