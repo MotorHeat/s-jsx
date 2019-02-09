@@ -89,14 +89,14 @@
         return v == null ? '' : v.toString();
     }
 
-    const fragmentProp = "s-jsx-fragment";
     const fnProps = ['fn', 'fn0', 'fn1','fn2', 'fn3', 'fn4', 'fn5', 'fn6', 'fn7', 'fn8', 'fn9' ];
+
     function h(nameOrComponent, attributes) {
         let children = [];
         for (let i = 2; i < arguments.length; i++) {
             let c = arguments[i];
             if (c) {
-                if (c[fragmentProp] === true) {
+                if (Array.isArray(c)) {
                     c.map(v => children.push(v));
                 }
                 else {
@@ -142,7 +142,6 @@
                 }
             }
         }
-        result[fragmentProp] = true;
         return result
     };
 
@@ -150,9 +149,12 @@
         for (let a in props) {
             if (fnProps.indexOf(a) >= 0) {
                 continue
-            }
+            }        
             let attrValue = props[a];
-            if (typeof (attrValue) === "function" && isSignal(attrValue)) {
+            if (a === "class") {
+                a = "className";
+            }
+            if (typeof (attrValue) === "function" && a.indexOf("on") !== 0) {
                 S(() => element[a] = attrValue());
             }
             else {
@@ -187,7 +189,7 @@
     }
 
     function isElement(element) {
-        return element instanceof Element || element instanceof HTMLDocument;
+        return element instanceof Element || element instanceof HTMLDocument || element instanceof Comment
     }
 
     function factoryElement(child) {
@@ -216,22 +218,13 @@
         }
     }
 
-    function isSignal(func) {
-        let code = func.toString(); //func.name doesn't work in IE, this is the best that I can find 
-
-        return code.indexOf(".current()") >= 0 || code.indexOf('Error("conflicting values: "') >= 0
-    }
-
     function factoryFunction(child) {
-        if (isSignal(child)) {
-            let result = function (parent, prevChild) {
-                let factory = nodeFactoryFromChild(child());
-                return factory(parent, prevChild, true)
-            };
-            result.isComputationFactory = true;
-            return result
-        }
-        return nodeFactoryFromChild(child())
+        let result = function (parent, prevChild) {
+            let factory = nodeFactoryFromChild(child());
+            return factory(parent, prevChild, true)
+        };
+        result.isComputationFactory = true;
+        return result
     }
 
     function factoryDefault(child) {
@@ -278,7 +271,7 @@
 
     function nodeFactoryFromChild(child) {
 
-        if (child === null || child === undefined) {
+        if (child === null || child === undefined || child === false) {
             return factoryNull(child)
         }
 
