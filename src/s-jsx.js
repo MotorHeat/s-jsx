@@ -66,11 +66,20 @@ function setProps(element, props) {
             a = "className"
         }
         if (typeof (attrValue) === "function" && a.indexOf("on") !== 0) {
-            S(() => element[a] = attrValue())
+            S(() => setPropValue(element, a, attrValue()))
         }
         else {
-            element[a] = attrValue
+            setPropValue(element, a, attrValue)
         }
+    }
+}
+
+function setPropValue(element, propertyName, value) {
+    if (propertyName.indexOf('-') >= 0) {
+        element.setAttribute(propertyName, value)
+    }
+    else {
+        element[propertyName] = value
     }
 }
 
