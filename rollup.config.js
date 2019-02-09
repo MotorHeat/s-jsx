@@ -1,5 +1,5 @@
 export default {
-    input: 'src/s-jsx.js',
+    input: 'src/index.js',
     output: {
         file: 'index.js',
         format: 'umd',
