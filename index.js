@@ -90,14 +90,14 @@
     }
 
     const fragmentProp = "s-jsx-fragment";
-
+    const fnProp = 'fn';
     function h(nameOrComponent, attributes) {
         let children = [];
         for (let i = 2; i < arguments.length; i++) {
             let c = arguments[i];
             if (c) {
                 if (c[fragmentProp] === true) {
-                    c.map( v => children.push(v));
+                    c.map(v => children.push(v));
                 }
                 else {
                     children.push(arguments[i]);
@@ -109,16 +109,25 @@
             let element = document.createElement(nameOrComponent);
             setProps(element, attributes);
             createChildren(element, children);
+            processSpecialProps(element, attributes, nameOrComponent);
             return element
         }
         else {
-            return nameOrComponent(attributes, children)
+            let result = nameOrComponent(attributes, children);
+            processSpecialProps(result, attributes, nameOrComponent);
+            return result
+        }
+    }
+
+    function processSpecialProps(element, props, nameOrComponent) {
+        if (props && props[fnProp]) {
+            props[fnProp](element, nameOrComponent);
         }
     }
 
     h.fragment = function fragment(_, fragment) {
         let result = [];
-        for(let i=0; i<fragment.length; i++) {
+        for (let i = 0; i < fragment.length; i++) {
             let c = fragment[i];
             if (c) {
                 if (Array.isArray(c)) {
@@ -135,15 +144,17 @@
 
     function setProps(element, props) {
         for (let a in props) {
+            if (a === fnProp) {
+                continue
+            }
             let attrValue = props[a];
             if (typeof (attrValue) === "function" && isSignal(attrValue)) {
-                    S__default(() => element[a] = attrValue());
+                S__default(() => element[a] = attrValue());
             }
             else {
                 element[a] = attrValue;
             }
         }
-
     }
 
     function runFactory(parent, factory) {
