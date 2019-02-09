@@ -7,7 +7,8 @@ This project was inspired by [S.js](https://github.com/adamhaile/S) and [Surplus
 Surplus implements own compiler that transpiles JSX syntax to a plain JavaScript while this library implements the JSX Factory function that creates real DOM nodes and manages S-computations. 
 
 # How it differs from Surplus?
-- You don't need a special compiler, you can use any existing JSX transpilers (Babel, TypeScript)
+- You don't need a special compiler
+- You can use any existing JSX transpilers (Babel, TypeScript) that supports configuration of the jsxFactory function
 - JSX is not required for building applications with s-jsx. You can use "h" directly and without a compilation step (see below)
 
 # The Gist
@@ -45,8 +46,35 @@ S.root( () => {
     document.body.appendChild(MainView(appState))
 })
 ```
+# How to use it?
+The above example assumes you are using a JavaScript compiler like Babel or TypeScript and a module bundler like Parcel, Webpack, etc. If you are using JSX, all you need to do is install the JSX transform plugin and add the pragma option to your .babelrc file.
+```
+{
+  "plugins": [
+      ["@babel/plugin-transform-react-jsx", {
+        "pragma": "h", 
+        "pragmaFrag": "h.fragment"
+      }]
+    ]  
+}
+```
+S-JSX supports JSX fragments via h.fragment function. Fragments are implemented in Babel starting from version 7. 
+Using fragments your views can return several DOM nodes:
+```JavaScript
+function UserProfile({name, age, address}) {
+  return <>
+        <h1>{name}</h1>
+        <h2>{age}</h2>
+        <p>{address}</p>
+    </>
+}
+```
+
+# Does SVG supported?
+Not yet but this is planned
 
 # Why real DOM, why not virtual DOM?
-Thar are million reasons for that and another million not to use it. 
-In short - because you don't need a virtual dom, the price you pay for using it is much bigger that what you get from it.
-You can also read good explanation on this topic on [Surplus page](https://github.com/adamhaile/surplus).
+Thar are million reasons to use real dom nodes and another million to use virtual dom.
+In short:  because you don't need a virtual dom :)
+My personal oppinion is that the price you pay for using vDOM is much bigger than what you get from it.
+You can also read good explanation on this topic on [Surplus page](https://github.com/adamhaile/surplus) in FAQ section.
