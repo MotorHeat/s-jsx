@@ -24,7 +24,7 @@ export function h(nameOrComponent, attributes) {
         else {
             return createElement(nameOrComponent, attributes, children, isSvgNodeName(nameOrComponent))
         }
-}
+    }
     else {
         let result = nameOrComponent(attributes, children)
         processSpecialProps(result, attributes, nameOrComponent)
