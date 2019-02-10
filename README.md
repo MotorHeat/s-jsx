@@ -93,7 +93,9 @@ function MainView(appState) {
 
 
 # Does SVG supported?
-Not yet but this is planned
+Yes.
+If the tag name matches a known SVG element, s-jsx will create an SVG element instead of an HTML one. For the small set of tag names that belong to both -- `<a>`, `<font>`, `<title>`, `<script>` and `<style>` -- s-jsx creates an HTML element.
+Children of SVG elements are also SVG elements, unless their parent is the `<foreignObject>` element, in which case they are DOM elements again.
 
 # Why real DOM, why not virtual DOM?
 Thar are million reasons to use real dom nodes and another million to use virtual dom.
