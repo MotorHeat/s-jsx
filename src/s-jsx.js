@@ -78,6 +78,7 @@ function setProps(element, props, isSvg) {
         if (a === "class") {
             a = "className"
         }
+
         if (typeof (attrValue) === "function" && a.indexOf("on") !== 0) {
             S(() => setPropValue(element, a, attrValue(), isSvg))
         }
@@ -87,7 +88,17 @@ function setProps(element, props, isSvg) {
     }
 }
 
+function getStyleString(obj) {
+    let result = ""
+    for(let p in obj) {
+        result += `${p}:${obj[p]};`
+    }
+    return result
+}
 function setPropValue(element, propertyName, value, isSvg) {
+    if (propertyName === "style" && typeof(value) === "object") {
+        value = getStyleString(value)
+    }
     if (isSvg || propertyName.indexOf('-') >= 0) {
         element.setAttribute(propertyName, value)
     }
