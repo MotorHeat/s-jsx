@@ -79,7 +79,7 @@ function setProps(element, props, isSvg) {
             a = "className"
         }
         if (typeof (attrValue) === "function" && a.indexOf("on") !== 0) {
-            S(() => setPropValue(element, a, attrValue()), isSvg)
+            S(() => setPropValue(element, a, attrValue(), isSvg))
         }
         else {
             setPropValue(element, a, attrValue, isSvg)
