@@ -1,4 +1,5 @@
 import S from 's-js'
+import { svgTags } from './svgTags'
 
 const fnProps = ['fn', 'fn0', 'fn1','fn2', 'fn3', 'fn4', 'fn5', 'fn6', 'fn7', 'fn8', 'fn9' ]
 
@@ -17,8 +18,9 @@ export function h(nameOrComponent, attributes) {
     }
 
     if (typeof (nameOrComponent) === 'string') {
-        let element = document.createElement(nameOrComponent)
-        setProps(element, attributes)
+        const isSvg = svgTags.indexOf(nameOrComponent) >= 0
+        let element = createElement(nameOrComponent, isSvg)
+        setProps(element, attributes, isSvg)
         createChildren(element, children)
         processSpecialProps(element, attributes, nameOrComponent)
         return element
@@ -27,6 +29,15 @@ export function h(nameOrComponent, attributes) {
         let result = nameOrComponent(attributes, children)
         processSpecialProps(result, attributes, nameOrComponent)
         return result
+    }
+}
+
+function createElement(nodeName, isSvg) {
+    if (isSvg) {
+        return document.createElementNS("http://www.w3.org/2000/svg", nodeName)
+    }
+    else {
+        return document.createElement(nodeName)
     }
 }
 
@@ -56,7 +67,7 @@ h.fragment = function fragment(_, fragment) {
     return result
 }
 
-function setProps(element, props) {
+function setProps(element, props, isSvg) {
     for (let a in props) {
         if (fnProps.indexOf(a) >= 0) {
             continue
@@ -66,16 +77,16 @@ function setProps(element, props) {
             a = "className"
         }
         if (typeof (attrValue) === "function" && a.indexOf("on") !== 0) {
-            S(() => setPropValue(element, a, attrValue()))
+            S(() => setPropValue(element, a, attrValue()), isSvg)
         }
         else {
-            setPropValue(element, a, attrValue)
+            setPropValue(element, a, attrValue, isSvg)
         }
     }
 }
 
-function setPropValue(element, propertyName, value) {
-    if (propertyName.indexOf('-') >= 0) {
+function setPropValue(element, propertyName, value, isSvg) {
+    if (isSvg || propertyName.indexOf('-') >= 0) {
         element.setAttribute(propertyName, value)
     }
     else {
