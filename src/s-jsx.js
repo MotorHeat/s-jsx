@@ -1,5 +1,5 @@
 import S from 's-js'
-import { svgTags } from './svgTags'
+import { AmbiguousElement, isSvgAmbiguousNodeName, isSvgNodeName } from './svgTags'
 
 const fnProps = ['fn', 'fn0', 'fn1','fn2', 'fn3', 'fn4', 'fn5', 'fn6', 'fn7', 'fn8', 'fn9' ]
 
@@ -18,13 +18,13 @@ export function h(nameOrComponent, attributes) {
     }
 
     if (typeof (nameOrComponent) === 'string') {
-        const isSvg = svgTags.indexOf(nameOrComponent) >= 0
-        let element = createElement(nameOrComponent, isSvg)
-        setProps(element, attributes, isSvg)
-        createChildren(element, children)
-        processSpecialProps(element, attributes, nameOrComponent)
-        return element
-    }
+        if (isSvgAmbiguousNodeName(nameOrComponent)) {
+            return new AmbiguousElement(nameOrComponent, attributes, children)
+        }
+        else {
+            return createElement(nameOrComponent, attributes, children, isSvgNodeName(nameOrComponent))
+        }
+}
     else {
         let result = nameOrComponent(attributes, children)
         processSpecialProps(result, attributes, nameOrComponent)
@@ -32,14 +32,16 @@ export function h(nameOrComponent, attributes) {
     }
 }
 
-function createElement(nodeName, isSvg) {
-    if (isSvg) {
-        return document.createElementNS("http://www.w3.org/2000/svg", nodeName)
-    }
-    else {
-        return document.createElement(nodeName)
-    }
+function createElement(nodeName, attributes, children, isSvg) {
+    let element = isSvg 
+        ? document.createElementNS("http://www.w3.org/2000/svg", nodeName) 
+        : document.createElement(nodeName)
+    setProps(element, attributes, isSvg)
+    createChildren(element, children)
+    processSpecialProps(element, attributes, nodeName)
+    return element
 }
+
 
 function processSpecialProps(element, props, nameOrComponent) {
     if (props) {
@@ -200,6 +202,14 @@ function factoryNull(child) {
     }
 }
 
+function factoryAmbiguous(child) {
+    return function (parent, prevChild, calledFromComputation) {
+        let isSvg = (parent instanceof SVGElement) && !(parent instanceof SVGForeignObjectElement)
+        let element = createElement(child.nodeName, child.props, child.children, isSvg)
+        return factoryElement(element)(parent, prevChild, calledFromComputation)
+    }
+}
+
 function nodeFactoryFromChild(child) {
 
     if (child === null || child === undefined || child === false) {
@@ -212,6 +222,10 @@ function nodeFactoryFromChild(child) {
 
     if (Array.isArray(child)) {
         return factoryArray(child)
+    }
+
+    if (child instanceof AmbiguousElement) {
+        return factoryAmbiguous(child)
     }
 
     if (typeof (child) === 'function') {
