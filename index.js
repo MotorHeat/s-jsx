@@ -89,6 +89,78 @@
         return v == null ? '' : v.toString();
     }
 
+    function AmbiguousElement(nodeName, props, children) {
+        this.nodeName = nodeName;
+        this.props = props;
+        this.children = children;
+    }
+
+    function isSvgNodeName(nodeName) {
+        return svgTags.indexOf(nodeName) >= 0
+    }
+
+    function isSvgAmbiguousNodeName(nodeName) {
+        return ambiguousSvgTags.indexOf(nodeName) >= 0
+    }
+
+    const svgTags = [
+        'circle',
+        'clipPath',
+        'defs',
+        'desc',
+        'ellipse',
+        'feBlend',
+        'feColorMatrix',
+        'feComponentTransfer',
+        'feComposite',
+        'feConvolveMatrix',
+        'feDiffuseLighting',
+        'feDisplacementMap',
+        'feDistantLight',
+        'feFlood',
+        'feFuncA',
+        'feFuncB',
+        'feFuncG',
+        'feFuncR',
+        'feGaussianBlur',
+        'feImage',
+        'feMerge',
+        'feMergeNode',
+        'feMorphology',
+        'feOffset',
+        'fePointLight',
+        'feSpecularLighting',
+        'feSpotLight',
+        'feTile',
+        'feTurbulence',
+        'filter',
+        'foreignObject',
+        'g',
+        'image',
+        'line',
+        'linearGradient',
+        'marker',
+        'mask',
+        'metadata',
+        'path',
+        'pattern',
+        'polygon',
+        'polyline',
+        'radialGradient',
+        'rect',
+        'stop',
+        'svg',
+        'switch',
+        'symbol',
+        'text',
+        'textPath',
+        'tspan',
+        'use',
+        'view'
+    ];
+
+    const ambiguousSvgTags = ['a', 'font', 'title', 'script', 'style'];
+
     const fnProps = ['fn', 'fn0', 'fn1','fn2', 'fn3', 'fn4', 'fn5', 'fn6', 'fn7', 'fn8', 'fn9' ];
 
     function h(nameOrComponent, attributes) {
@@ -106,11 +178,12 @@
         }
 
         if (typeof (nameOrComponent) === 'string') {
-            let element = document.createElement(nameOrComponent);
-            setProps(element, attributes);
-            createChildren(element, children);
-            processSpecialProps(element, attributes, nameOrComponent);
-            return element
+            if (isSvgAmbiguousNodeName(nameOrComponent)) {
+                return new AmbiguousElement(nameOrComponent, attributes, children)
+            }
+            else {
+                return createElement(nameOrComponent, attributes, children, isSvgNodeName(nameOrComponent))
+            }
         }
         else {
             let result = nameOrComponent(attributes, children);
@@ -118,6 +191,17 @@
             return result
         }
     }
+
+    function createElement(nodeName, attributes, children, isSvg) {
+        let element = isSvg 
+            ? document.createElementNS("http://www.w3.org/2000/svg", nodeName) 
+            : document.createElement(nodeName);
+        setProps(element, attributes, isSvg);
+        createChildren(element, children);
+        processSpecialProps(element, attributes, nodeName);
+        return element
+    }
+
 
     function processSpecialProps(element, props, nameOrComponent) {
         if (props) {
@@ -145,7 +229,7 @@
         return result
     };
 
-    function setProps(element, props) {
+    function setProps(element, props, isSvg) {
         for (let a in props) {
             if (fnProps.indexOf(a) >= 0) {
                 continue
@@ -154,12 +238,32 @@
             if (a === "class") {
                 a = "className";
             }
+
             if (typeof (attrValue) === "function" && a.indexOf("on") !== 0) {
-                S(() => element[a] = attrValue());
+                S(() => setPropValue(element, a, attrValue(), isSvg));
             }
             else {
-                element[a] = attrValue;
+                setPropValue(element, a, attrValue, isSvg);
             }
+        }
+    }
+
+    function getStyleString(obj) {
+        let result = "";
+        for(let p in obj) {
+            result += `${p}:${obj[p]};`;
+        }
+        return result
+    }
+    function setPropValue(element, propertyName, value, isSvg) {
+        if (propertyName === "style" && typeof(value) === "object") {
+            value = getStyleString(value);
+        }
+        if (isSvg || propertyName.indexOf('-') >= 0) {
+            element.setAttribute(propertyName, value);
+        }
+        else {
+            element[propertyName] = value;
         }
     }
 
@@ -269,6 +373,14 @@
         }
     }
 
+    function factoryAmbiguous(child) {
+        return function (parent, prevChild, calledFromComputation) {
+            let isSvg = (parent instanceof SVGElement) && !(parent instanceof SVGForeignObjectElement);
+            let element = createElement(child.nodeName, child.props, child.children, isSvg);
+            return factoryElement(element)(parent, prevChild, calledFromComputation)
+        }
+    }
+
     function nodeFactoryFromChild(child) {
 
         if (child === null || child === undefined || child === false) {
@@ -281,6 +393,10 @@
 
         if (Array.isArray(child)) {
             return factoryArray(child)
+        }
+
+        if (child instanceof AmbiguousElement) {
+            return factoryAmbiguous(child)
         }
 
         if (typeof (child) === 'function') {
